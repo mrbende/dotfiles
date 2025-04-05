@@ -1,0 +1,115 @@
+#!/usr/bin/env sh
+
+# for this to work you must configure sudo such that
+# it will be able to run the command without password
+#
+# see this wiki page for information:
+#  - https://github.com/koekeishiya/yabai/wiki/Installing-yabai-(latest-release)#configure-scripting-addition
+#
+# yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+# sudo yabai --load-sa
+#
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+sudo yabai --load-sa
+
+#
+# -- Global Settings --
+yabai -m config layout                     bsp
+yabai -m config window_placement           second_child
+yabai -m config window_topmost             off
+yabai -m config split_ratio                0.50
+yabai -m config auto_balance               off
+
+# -- Appearance --
+yabai -m config window_opacity             off
+yabai -m config window_shadow              on
+yabai -m config window_border              on
+yabai -m config window_border_width        4
+yabai -m config active_window_border_color 0xff775759
+yabai -m config normal_window_border_color 0xff555555
+
+# -- Padding and Gaps --
+yabai -m config top_padding                6
+yabai -m config bottom_padding             6
+yabai -m config left_padding               6
+yabai -m config right_padding              6
+yabai -m config window_gap                 12
+
+# -- Mouse --
+yabai -m config mouse_follows_focus        on
+yabai -m config focus_follows_mouse        on
+yabai -m config mouse_modifier             fn
+yabai -m config mouse_action1              move
+yabai -m config mouse_action2              resize
+yabai -m config mouse_drop_action          swap
+
+# -- Define Workspaces --
+yabai -m space 1 --label terminal
+yabai -m space 2 --label browser-work
+yabai -m space 3 --label slack
+yabai -m space 4 --label vpn
+yabai -m space 5 --label fun
+
+# -- Rules --
+# Terminal apps to space 1
+yabai -m rule --add app="^iTerm2$" space=terminal   
+yabai -m rule --add app="^Slack$" space=slack
+yabai -m rule --add app="^AWS VPN Client$" space=vpn
+yabai -m rule --add app="^NordLayer.app$" space=vpn
+yabai -m rule --add app="^Spotify$" space=fun
+
+# -- Exclude problematic apps from management --
+yabai -m rule --add app="^System Preferences$" manage=off
+yabai -m rule --add app="^System Settings$" manage=off
+yabai -m rule --add app="^Calculator$" manage=off
+yabai -m rule --add app="^Karabiner-Elements$" manage=off
+yabai -m rule --add app="^Karabiner-EventViewer$" manage=off
+yabai -m rule --add app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
+yabai -m rule --add app="^Spotlight$" manage=off
+yabai -m rule --add app="^Preview$" manage=off
+yabai -m rule --add app="^QuickTime Player$" manage=off
+
+## make yabai aware of new toolbar
+# yabai -m config external_bar all:24:0
+
+echo "yabai configuration loaded.."
+
+### load the setup to spawn windows
+source $HOME/.config/yabai/startup.sh
+
+
+
+
+
+
+
+# # default layout (can be bsp, stack or float)
+# yabai -m config layout bsp
+#
+# # New window spawns to the right if vertical split, or bottom if horizontal split
+# yabai -m config window_placement second_child
+#
+# # padding set to 12px
+# yabai -m config top_padding 12
+# yabai -m config bottom_padding 12
+# yabai -m config left_padding 12
+# yabai -m config right_padding 12
+# yabai -m config window_gap 12
+#
+# # center mouse on window with focus
+# yabai -m config mouse_follows_focus on
+#
+# # modifier for clicking and dragging with mouse
+# yabai -m config mouse_modifier alt
+# # set modifier + left-click drag to move window
+# yabai -m config mouse_action1 move
+# # set modifier + right-click drag to resize window
+# yabai -m config mouse_action2 resize
+#
+#
+# # when window is dropped in center of another window, swap them (on edges it will split it)
+# yabai -m mouse_drop_action swap
+#
+# yabai -m rule --add app="^System Settings$" manage=off
+# yabai -m rule --add app="^Calculator$" manage=off
+# yabai -m rule --add app="^Karabiner-Elements$" manage=off

@@ -1,22 +1,30 @@
 # Ignore everything by default
 *
 
-# Track only specific directories/files
+# Track specific directories (unignore the directories themselves)
+!tmux/
+!nvim/
+!yabai/
+!skhd/
+!karabiner/
+!zsh/
+!bat/
+
+# Now track files inside those directories
+!tmux/**
+!nvim/**
+!yabai/**
+!skhd/**
+!karabiner/**
+!zsh/**
+!bat/**
+
+# Track specific files in root
 !.gitignore
-!tmux/*
-!nvim/*
-!yabai/*
-!skhd/*
-!karabiner/*
-!zsh/*
-!READE.md
+!README.md
 !.zshenv
-!bat/*
-# Add other directories you want to track
 
-# Exclude large/sensitive files within tracked directories
-tmux/plugins/
-karabiner/automatic_backups/
-karabiner/assets/
-
-
+# Exclude specific unwanted files/directories
+tmux/plugins/**
+karabiner/automatic_backups/**
+karabiner/assets/**

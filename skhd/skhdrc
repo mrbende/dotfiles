@@ -1,0 +1,87 @@
+# .skhdrc configuration for use with home row mods and yabai
+# Organized with consistent modifiers for related functions:
+# - Space operations: alt (S or L when held)
+# - Window operations: cmd (A or semicolon when held)
+# - Advanced window operations: cmd + shift (A/semicolon + F/J)
+# - Window sizing: cmd + ctrl (A/semicolon + D/K)
+
+# ==============================
+# SPACE MANAGEMENT (ALT modifier)
+# ==============================
+
+# Navigate between spaces
+alt - n : yabai -m space --focus next
+alt - p : yabai -m space --focus prev
+
+# Focus specific spaces
+alt - 1 : yabai -m space --focus 1
+alt - 2 : yabai -m space --focus 2
+alt - 3 : yabai -m space --focus 3
+alt - 4 : yabai -m space --focus 4
+alt - 5 : yabai -m space --focus 5
+
+# Move window to space
+alt + shift - 1 : yabai -m window --space 1
+alt + shift - 2 : yabai -m window --space 2
+alt + shift - 3 : yabai -m window --space 3
+alt + shift - 4 : yabai -m window --space 4
+alt + shift - 5 : yabai -m window --space 5
+
+# Change layout of current space
+alt - b : yabai -m space --layout bsp
+alt - s : yabai -m space --layout stack
+alt - f : yabai -m space --layout float
+
+# Create and destroy spaces
+alt - c : yabai -m space --create
+alt - d : yabai -m space --destroy
+
+# Cycle through stack windows
+alt - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
+
+# ==============================
+# WINDOW MANAGEMENT (CMD modifier)
+# ==============================
+
+# Focus window operations
+cmd - h : yabai -m window --focus west
+cmd - j : yabai -m window --focus south
+cmd - k : yabai -m window --focus north
+cmd - l : yabai -m window --focus east
+
+# Toggle window properties
+cmd - f : yabai -m window --toggle zoom-fullscreen
+cmd - t : yabai -m window --toggle float
+cmd - s : yabai -m window --toggle sticky
+cmd - p : yabai -m window --toggle pip
+
+# Rotate and balance
+cmd - r : yabai -m space --rotate 90
+cmd - b : yabai -m space --balance
+
+# ==============================
+# WINDOW MOVEMENT (CMD+SHIFT modifiers)
+# ==============================
+
+# Move/swap windows
+shift + cmd - h : yabai -m window --swap west
+shift + cmd - j : yabai -m window --swap south
+shift + cmd - k : yabai -m window --swap north
+shift + cmd - l : yabai -m window --swap east
+
+# Move window to display
+shift + cmd - d : yabai -m window --display next; yabai -m display --focus next
+
+# ==============================
+# WINDOW RESIZING (CMD+CTRL modifiers)
+# ==============================
+
+# Resize windows
+ctrl + cmd - h : yabai -m window --resize left:-100:0; \
+                 yabai -m window --resize right:-100:0
+ctrl + cmd - j : yabai -m window --resize bottom:0:100; \
+                 yabai -m window --resize top:0:100
+ctrl + cmd - k : yabai -m window --resize top:0:-100; \
+                 yabai -m window --resize bottom:0:-100
+ctrl + cmd - l : yabai -m window --resize right:100:0; \
+                 yabai -m window --resize left:100:0
