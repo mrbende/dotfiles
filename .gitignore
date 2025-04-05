@@ -3,20 +3,20 @@
 
 # Track only specific directories/files
 !.gitignore
-!tmux/
-!nvim/
-!yabai/
-!skhd/
-!karabiner/
-!zsh/
-!README.md
+!tmux/*
+!nvim/*
+!yabai/*
+!skhd/*
+!karabiner/*
+!zsh/*
+!READE.md
 !.zshenv
-!bat/
+!bat/*
 # Add other directories you want to track
 
 # Exclude large/sensitive files within tracked directories
 tmux/plugins/
-karabiner/automatic_backups
-karabiner/assets
+karabiner/automatic_backups/
+karabiner/assets/
 
 
