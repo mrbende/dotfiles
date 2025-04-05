@@ -7,7 +7,6 @@
 !yabai/
 !skhd/
 !karabiner/
-!zsh/
 !bat/
 
 # Now track files inside those directories
@@ -16,15 +15,15 @@
 !yabai/**
 !skhd/**
 !karabiner/**
-!zsh/**
 !bat/**
 
 # Track specific files in root
 !.gitignore
 !README.md
-!.zshenv
+!.zshrc
 
 # Exclude specific unwanted files/directories
 tmux/plugins/**
 karabiner/automatic_backups/**
 karabiner/assets/**
+nvim/lazy-lock.json
