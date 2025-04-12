@@ -2,7 +2,7 @@ vim.g.mapleader = " "
 
 local keymap = vim.keymap -- for conciseness
 
-keymap.set("i", "jk", "<ESC>", { desc = "Exist insert mode with jk" })
+keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
 
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
@@ -24,7 +24,7 @@ keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer
 
 -- primeagens tmux sessionizer
 keymap.set("n", "<C-f>", function()
-  vim.cmd("silent !tmux neww tmux-sessionizer")
-  -- Optional: add a delay and return focus to Neovim
-  -- vim.defer_fn(function() vim.cmd("redraw!") end, 100)
+    vim.cmd("silent !tmux neww tmux-sessionizer")
+    -- Optional: add a delay and return focus to Neovim
+    -- vim.defer_fn(function() vim.cmd("redraw!") end, 100)
 end, { silent = true })
