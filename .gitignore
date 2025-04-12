@@ -8,6 +8,8 @@
 !skhd/
 !karabiner/
 !bat/
+!zsh/
+!bin/
 
 # Now track files inside those directories
 !tmux/**
@@ -20,7 +22,8 @@
 # Track specific files in root
 !.gitignore
 !README.md
-!.zshrc
+!TODO.md
+
 
 # Exclude specific unwanted files/directories
 tmux/plugins/**
