@@ -3,9 +3,9 @@
     {
       "complex_modifications": {
         "parameters": {
-          "basic.simultaneous_threshold_milliseconds": 20,
-          "basic.to_delayed_action_delay_milliseconds": 150,
-          "basic.to_if_held_down_threshold_milliseconds": 150
+          "basic.simultaneous_threshold_milliseconds": 15,
+          "basic.to_delayed_action_delay_milliseconds": 120,
+          "basic.to_if_held_down_threshold_milliseconds": 120
         },
         "rules": [
           {
@@ -17,8 +17,8 @@
                   "modifiers": { "optional": ["any"] }
                 },
                 "parameters": {
-                  "basic.to_delayed_action_delay_milliseconds": 150,
-                  "basic.to_if_held_down_threshold_milliseconds": 150
+                  "basic.to_delayed_action_delay_milliseconds": 120,
+                  "basic.to_if_held_down_threshold_milliseconds": 120
                 },
                 "to_delayed_action": {
                   "to_if_canceled": [
@@ -46,8 +46,8 @@
                   "modifiers": { "optional": ["any"] }
                 },
                 "parameters": {
-                  "basic.to_delayed_action_delay_milliseconds": 150,
-                  "basic.to_if_held_down_threshold_milliseconds": 150
+                  "basic.to_delayed_action_delay_milliseconds": 120,
+                  "basic.to_if_held_down_threshold_milliseconds": 120
                 },
                 "to_delayed_action": {
                   "to_if_canceled": [
@@ -80,8 +80,8 @@
                   "modifiers": { "optional": ["any"] }
                 },
                 "parameters": {
-                  "basic.to_delayed_action_delay_milliseconds": 150,
-                  "basic.to_if_held_down_threshold_milliseconds": 150
+                  "basic.to_delayed_action_delay_milliseconds": 120,
+                  "basic.to_if_held_down_threshold_milliseconds": 120
                 },
                 "to_delayed_action": {
                   "to_if_canceled": [
@@ -109,8 +109,8 @@
                   "modifiers": { "optional": ["any"] }
                 },
                 "parameters": {
-                  "basic.to_delayed_action_delay_milliseconds": 150,
-                  "basic.to_if_held_down_threshold_milliseconds": 150
+                  "basic.to_delayed_action_delay_milliseconds": 120,
+                  "basic.to_if_held_down_threshold_milliseconds": 120
                 },
                 "to_delayed_action": {
                   "to_if_canceled": [
@@ -143,8 +143,8 @@
                   "modifiers": { "optional": ["any"] }
                 },
                 "parameters": {
-                  "basic.to_delayed_action_delay_milliseconds": 150,
-                  "basic.to_if_held_down_threshold_milliseconds": 150
+                  "basic.to_delayed_action_delay_milliseconds": 120,
+                  "basic.to_if_held_down_threshold_milliseconds": 120
                 },
                 "to_delayed_action": {
                   "to_if_canceled": [
@@ -172,8 +172,8 @@
                   "modifiers": { "optional": ["any"] }
                 },
                 "parameters": {
-                  "basic.to_delayed_action_delay_milliseconds": 150,
-                  "basic.to_if_held_down_threshold_milliseconds": 150
+                  "basic.to_delayed_action_delay_milliseconds": 120,
+                  "basic.to_if_held_down_threshold_milliseconds": 120
                 },
                 "to_delayed_action": {
                   "to_if_canceled": [
@@ -206,8 +206,8 @@
                   "modifiers": { "optional": ["any"] }
                 },
                 "parameters": {
-                  "basic.to_delayed_action_delay_milliseconds": 150,
-                  "basic.to_if_held_down_threshold_milliseconds": 150
+                  "basic.to_delayed_action_delay_milliseconds": 120,
+                  "basic.to_if_held_down_threshold_milliseconds": 120
                 },
                 "to_delayed_action": {
                   "to_if_canceled": [
@@ -235,8 +235,8 @@
                   "modifiers": { "optional": ["any"] }
                 },
                 "parameters": {
-                  "basic.to_delayed_action_delay_milliseconds": 150,
-                  "basic.to_if_held_down_threshold_milliseconds": 150
+                  "basic.to_delayed_action_delay_milliseconds": 120,
+                  "basic.to_if_held_down_threshold_milliseconds": 120
                 },
                 "to_delayed_action": {
                   "to_if_canceled": [
@@ -269,8 +269,8 @@
                   "modifiers": { "optional": ["any"] }
                 },
                 "parameters": {
-                  "basic.to_delayed_action_delay_milliseconds": 150,
-                  "basic.to_if_held_down_threshold_milliseconds": 150
+                  "basic.to_delayed_action_delay_milliseconds": 120,
+                  "basic.to_if_held_down_threshold_milliseconds": 120
                 },
                 "to_delayed_action": {
                   "to_if_canceled": [
