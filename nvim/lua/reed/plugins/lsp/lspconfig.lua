@@ -10,9 +10,6 @@ return {
         -- import lspconfig plugin
         local lspconfig = require("lspconfig")
 
-        -- import mason_lspconfig plugin
-        local mason_lspconfig = require("mason-lspconfig")
-
         -- import cmp-nvim-lsp plugin
         local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
@@ -73,8 +70,7 @@ return {
         local capabilities = cmp_nvim_lsp.default_capabilities()
 
         -- Change the Diagnostic symbols in the sign column (gutter)
-        -- (not in youtube nvim video)
-        local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
+        local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
         for type, icon in pairs(signs) do
             local hl = "DiagnosticSign" .. type
             vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
@@ -93,103 +89,87 @@ return {
             severity_sort = true,
         })
 
-        mason_lspconfig.setup_handlers({
-            -- default handler for installed servers
-            function(server_name)
-                lspconfig[server_name].setup({
-                    capabilities = capabilities,
-                })
-            end,
-            ["pyright"] = function()
-                -- Get active virtual environment
-                local venv_path = os.getenv("VIRTUAL_ENV")
-                local python_path = nil
-                if venv_path ~= nil then
-                    python_path = venv_path .. "/bin/python"
+        -- Custom server configurations using the new 0.11+ API
+        -- Configure before enabling with vim.lsp.enable()
+
+        -- Configure pyright
+        lspconfig.pyright.default_config.settings = {
+            python = {
+                analysis = {
+                    reportMissingImports = true,
+                    reportMissingModuleSource = false,
+                    reportUnusedImport = true,
+                    reportImportCycles = false,
+                    reportUndefinedVariable = true,
+                    reportUnboundVariable = true,
+                    diagnosticMode = "workspace",
+                    typeCheckingMode = "basic",
+                    reportDuplicateImport = false,
+                    reportWildcardImportFromLibrary = false,
+                },
+            },
+        }
+
+        -- Get active virtual environment
+        local venv_path = os.getenv("VIRTUAL_ENV")
+        if venv_path ~= nil then
+            lspconfig.pyright.default_config.settings.python.pythonPath = venv_path .. "/bin/python"
+        end
+
+        -- Configure svelte
+        lspconfig.svelte.default_config.on_attach = function(client, bufnr)
+            vim.api.nvim_create_autocmd("BufWritePost", {
+                pattern = { "*.js", "*.ts" },
+                callback = function(ctx)
+                    client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
+                end,
+            })
+        end
+
+        -- Configure graphql
+        lspconfig.graphql.default_config.filetypes = {
+            "graphql",
+            "gql",
+            "svelte",
+            "typescriptreact",
+            "javascriptreact",
+        }
+
+        -- Configure emmet_ls
+        lspconfig.emmet_ls.default_config.filetypes = {
+            "html",
+            "typescriptreact",
+            "javascriptreact",
+            "css",
+            "sass",
+            "scss",
+            "less",
+            "svelte",
+        }
+
+        -- Configure lua_ls
+        lspconfig.lua_ls.default_config.settings = {
+            Lua = {
+                diagnostics = {
+                    globals = { "vim" },
+                },
+                completion = {
+                    callSnippet = "Replace",
+                },
+                hint = {
+                    enable = false,
+                },
+            },
+        }
+
+        -- Set capabilities for all servers
+        vim.api.nvim_create_autocmd("LspAttach", {
+            callback = function(args)
+                local client = vim.lsp.get_client_by_id(args.data.client_id)
+                if client then
+                    client.server_capabilities =
+                        vim.tbl_deep_extend("force", client.server_capabilities or {}, capabilities)
                 end
-                lspconfig["pyright"].setup({
-                    capabilities = capabilities,
-                    settings = {
-                        python = {
-                            pythonPath = python_path,
-                            analysis = {
-                                -- The following settings will disable ALL import-related diagnostics
-                                reportMissingImports = true,
-                                reportMissingModuleSource = false,
-                                reportUnusedImport = true,
-                                reportImportCycles = false,
-                                reportUndefinedVariable = true, -- Often triggered by imports
-                                reportUnboundVariable = true, -- Often triggered by imports
-
-                                -- Keep other diagnostics enabled
-                                diagnosticMode = "workspace",
-                                typeCheckingMode = "basic",
-
-                                -- Still display other helpful diagnostics
-                                reportDuplicateImport = false,
-                                reportWildcardImportFromLibrary = false,
-                            },
-                        },
-                    },
-                })
-            end,
-            ["svelte"] = function()
-                -- configure svelte server
-                lspconfig["svelte"].setup({
-                    capabilities = capabilities,
-                    on_attach = function(client, bufnr)
-                        vim.api.nvim_create_autocmd("BufWritePost", {
-                            pattern = { "*.js", "*.ts" },
-                            callback = function(ctx)
-                                -- Here use ctx.match instead of ctx.file
-                                client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
-                            end,
-                        })
-                    end,
-                })
-            end,
-            ["graphql"] = function()
-                -- configure graphql language server
-                lspconfig["graphql"].setup({
-                    capabilities = capabilities,
-                    filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-                })
-            end,
-            ["emmet_ls"] = function()
-                -- configure emmet language server
-                lspconfig["emmet_ls"].setup({
-                    capabilities = capabilities,
-                    filetypes = {
-                        "html",
-                        "typescriptreact",
-                        "javascriptreact",
-                        "css",
-                        "sass",
-                        "scss",
-                        "less",
-                        "svelte",
-                    },
-                })
-            end,
-            ["lua_ls"] = function()
-                -- configure lua server (with special settings)
-                lspconfig["lua_ls"].setup({
-                    capabilities = capabilities,
-                    settings = {
-                        Lua = {
-                            -- make the language server recognize "vim" global
-                            diagnostics = {
-                                globals = { "vim" },
-                            },
-                            completion = {
-                                callSnippet = "Replace",
-                            },
-                            hint = {
-                                enable = false, -- Disable hints for Lua
-                            },
-                        },
-                    },
-                })
             end,
         })
     end,
