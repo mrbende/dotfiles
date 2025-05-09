@@ -1,5 +1,5 @@
 return {
-    "mason-org/mason.nvim",
+    "mason-org/mason.nvim", -- Updated namespace
     dependencies = {
         "mason-org/mason-lspconfig.nvim",
         "WhoIsSethDaniel/mason-tool-installer.nvim",
@@ -42,7 +42,7 @@ return {
                 "prismals",
                 "pyright",
             },
-            -- Using the new API for automatic enabling
+            -- Using the new API for automatic enabling in Neovim 0.11+
             automatic_enable = true,
         })
 
