@@ -1,0 +1,45 @@
+/ {
+    chosen {
+        zmk,display = &nice_view_display;
+    };
+};
+
+/ {
+    left_encoder: encoder_left {
+        compatible = "alps,ec11";
+        label = "LEFT_ENCODER";
+        a-gpios = <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+        b-gpios = <&pro_micro 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+        resolution = <4>;
+        status = "okay";
+    };
+
+    sensors {
+        compatible = "zmk,keymap-sensors";
+        sensors = <&left_encoder>;
+    };
+};
+
+&nice_view_display {
+    status = "okay";
+};
+
+/ {
+    // Use existing widgets from Nice!View but arrange them in your layout
+    left_display_status: left_display_status {
+        compatible = "zmk,display-status-screen";
+        label = "LEFT_STATUS_SCREEN";
+        status = "okay";
+        
+        // Reference existing widgets by node label
+        layer_status {
+            position = <0 0>;
+        };
+        battery_status {
+            position = <10 32>;
+        };
+        wpm_status {
+            position = <76 32>;
+        };
+    };
+};

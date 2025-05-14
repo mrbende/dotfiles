@@ -9,6 +9,7 @@
 !karabiner/
 !bat/
 !zsh/
+!corne/
 !bin/
 
 # Now track files inside those directories
@@ -18,6 +19,7 @@
 !skhd/**
 !karabiner/**
 !bat/**
+!corne/**
 
 # Track specific files in root
 !.gitignore
