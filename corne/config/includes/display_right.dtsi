@@ -17,11 +17,9 @@
         label = "RIGHT_STATUS_SCREEN";
         status = "okay";
         
-        static_image_widget: static_image_widget {
+        waifu_widget: waifu_widget {
             compatible = "zmk,widget-static-image";
             status = "okay";
-            
-            // Reference to the image resource
             image = <&waifu_image>;
         };
     };
@@ -35,7 +33,7 @@
             width = <128>;
             height = <64>;
             format = <SCREEN_INFO_MONO_VTILE_8>;
-            path = "images/waifu.bin";
+            path = "resources/images/waifu.bin";
         };
     };
 };

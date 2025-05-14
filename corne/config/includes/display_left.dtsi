@@ -25,21 +25,10 @@
 };
 
 / {
-    // Use existing widgets from Nice!View but arrange them in your layout
+    // Use default Nice!View display - don't try to reference the standard ZMK widgets
     left_display_status: left_display_status {
         compatible = "zmk,display-status-screen";
         label = "LEFT_STATUS_SCREEN";
         status = "okay";
-        
-        // Reference existing widgets by node label
-        layer_status {
-            position = <0 0>;
-        };
-        battery_status {
-            position = <10 32>;
-        };
-        wpm_status {
-            position = <76 32>;
-        };
     };
 };
