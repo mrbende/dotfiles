@@ -1,6 +1,0 @@
-/ {
-    chosen {
-        zmk,display-left = &left_display_status;
-        zmk,display-right = &right_display_status;
-    };
-};

@@ -6,26 +6,15 @@
 ├── build.yaml
 ├── check-firmware.sh
 ├── config
-│   ├── boards
-│   │   └── shields
-│   │       └── corne
-│   │           └── corne.overlay
-│   ├── CMakeLists.txt
 │   ├── corne.conf
 │   ├── corne.keymap
-│   ├── includes
-│   │   ├── display_left.dtsi
-│   │   └── display_right.dtsi
-│   ├── resources
-│   │   └── images
-│   │       └── waifu.bin
 │   └── west.yml
 ├── directory_contents.txt
 ├── Dockerfile
 ├── firmware
 └── README.md
 
-10 directories, 15 files
+4 directories, 10 files
 
 # File Contents
 
@@ -119,11 +108,24 @@ echo "Build process completed."
 # FILE: ./build.yaml
 # ===========================================
 
-# Corne with nice!nano v2 and Nice!View
+# This file generates the GitHub Actions matrix
+# For simple board + shield combinations, add them
+# to the top level board and shield arrays, for more
+# control, add individual board + shield combinations to
+# the `include` property, e.g:
+#
+# board: [ "nice_nano_v2" ]
+# shield: [ "corne_left", "corne_right" ]
+# include:
+#   - board: bdn9_rev2
+#   - board: nice_nano_v2
+#     shield: reviung41
+#
 ---
 include:
   - board: nice_nano_v2
     shield: corne_left nice_view_adapter nice_view
+    snippet: studio-rpc-usb-uart
   - board: nice_nano_v2
     shield: corne_right nice_view_adapter nice_view
 
@@ -213,51 +215,25 @@ exit 0
 
 
 # ===========================================
-# FILE: ./config/boards/shields/corne/corne.overlay
-# ===========================================
-
-/ {
-    chosen {
-        zmk,display-left = &left_display_status;
-        zmk,display-right = &right_display_status;
-    };
-};
-
-
-
-# ===========================================
-# FILE: ./config/CMakeLists.txt
-# ===========================================
-
-file(GLOB RESOURCES_FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/images/*)
-target_sources(app PRIVATE ${RESOURCES_FILES})
-
-
-
-# ===========================================
 # FILE: ./config/corne.conf
 # ===========================================
 
-# Basic ZMK settings from your working config
+# Uncomment the following line to enable deep sleep
+# CONFIG_ZMK_SLEEP=y
+
+# Uncomment the following line to increase the keyboard's wireless range
 CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
+
+# Enable eager debouncing
 CONFIG_ZMK_KSCAN_DEBOUNCE_PRESS_MS=1
 CONFIG_ZMK_KSCAN_DEBOUNCE_RELEASE_MS=10
+
+# Enable ZMK Studio for Realtime Keymap Updates
 CONFIG_ZMK_STUDIO=y
 CONFIG_ZMK_STUDIO_LOCKING=n
 
-# Display Configuration - based on documentation
-CONFIG_ZMK_DISPLAY=y
-CONFIG_ZMK_DISPLAY_STATUS_SCREEN_BUILT_IN=n
-CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM=y
-
-# Use dedicated thread for display updates (prevents slow displays from affecting key scanning)
-CONFIG_ZMK_DISPLAY_WORK_QUEUE_DEDICATED=y
-CONFIG_ZMK_DISPLAY_DEDICATED_THREAD_STACK_SIZE=2048
-CONFIG_ZMK_DISPLAY_DEDICATED_THREAD_PRIORITY=5
-
-# Split keyboard settings (required for displays)
-CONFIG_ZMK_SPLIT=y
-CONFIG_ZMK_SPLIT_BLE=y
+# Uncomment the following line to enable USB Logging (this increases power usage by a significant amount, turn it off when not in use)
+# CONFIG_ZMK_USB_LOGGING=y
 
 
 
@@ -265,173 +241,78 @@ CONFIG_ZMK_SPLIT_BLE=y
 # FILE: ./config/corne.keymap
 # ===========================================
 
-// CORNE KEYMAP //
+/*
+ * Copyright (c) 2020 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
 
-// Include display configurations
-#if CONFIG_ZMK_DISPLAY
-#include "includes/display_left.dtsi"
-#include "includes/display_right.dtsi"
-#endif
-
 / {
-    keymap {
-        compatible = "zmk,keymap";
+        keymap {
+                compatible = "zmk,keymap";
 
-        default_layer {
-            // -----------------------------------------------------------------------------------------
-            // |  TAB |  Q  |  W  |  E  |  R  |  T  |   |  Y  |  U   |  I  |  O  |  P  | BKSP |
-            // | CTRL |  A  |  S  |  D  |  F  |  G  |   |  H  |  J   |  K  |  L  |  ;  |  '   |
-            // | SHFT |  Z  |  X  |  C  |  V  |  B  |   |  N  |  M   |  ,  |  .  |  /  | ESC  |
-            //                    | GUI | LWR | SPC |   | ENT | RSE  | ALT |
-            display-name = "Base";
-            bindings = <
-                &kp TAB   &kp Q &kp W &kp E &kp R &kp T   &kp Y &kp U  &kp I     &kp O   &kp P    &kp BSPC
-                &kp LCTRL &kp A &kp S &kp D &kp F &kp G   &kp H &kp J  &kp K     &kp L   &kp SEMI &kp SQT
-                &kp LSHFT &kp Z &kp X &kp C &kp V &kp B   &kp N &kp M  &kp COMMA &kp DOT &kp FSLH &kp ESC
-                &kp LGUI &mo 1 &kp SPACE   &kp RET &mo 2 &kp RALT
-            >;
-        };
-        lower_layer {
-            // -----------------------------------------------------------------------------------------
-            // |  TAB |  1  |  2  |  3  |  4  |  5  |   |  6  |  7  |  8  |  9  |  0  | BKSP |
-            // | BTCLR| BT1 | BT2 | BT3 | BT4 | BT5 |   | LFT | DWN |  UP | RGT |     |      |
-            // | SHFT |     |     |     |     |     |   |     |     |     |     |     |      |
-            //                    | GUI |     | SPC |   | ENT |     | ALT |
-            display-name = "Lower";
-            bindings = <
-                &kp TAB    &kp N1       &kp N2       &kp N3       &kp N4       &kp N5         &kp N6   &kp N7   &kp N8 &kp N9    &kp N0 &kp BSPC
-                &bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4   &kp LEFT &kp DOWN &kp UP &kp RIGHT &trans &trans
-                &kp LSHFT  &trans       &trans       &trans       &trans       &trans         &trans   &trans   &trans &trans    &trans &trans
-                &kp LGUI     &trans       &kp SPACE      &kp RET  &trans   &kp RALT
-            >;
-        };
+                default_layer {
+// -----------------------------------------------------------------------------------------
+// |  TAB |  Q  |  W  |  E  |  R  |  T  |   |  Y  |  U   |  I  |  O  |  P  | BKSP |
+// | CTRL |  A  |  S  |  D  |  F  |  G  |   |  H  |  J   |  K  |  L  |  ;  |  '   |
+// | SHFT |  Z  |  X  |  C  |  V  |  B  |   |  N  |  M   |  ,  |  .  |  /  | ESC  |
+//                    | GUI | LWR | SPC |   | ENT | RSE  | ALT |
+                        display-name = "TEST";
+                        bindings = <
+   &kp TAB   &kp Q &kp W &kp E &kp R &kp T   &kp Y &kp U  &kp I     &kp O   &kp P    &kp BSPC
+   &kp LCTRL &kp A &kp S &kp D &kp F &kp G   &kp H &kp J  &kp K     &kp L   &kp SEMI &kp SQT
+   &kp LSHFT &kp Z &kp X &kp C &kp V &kp B   &kp N &kp M  &kp COMMA &kp DOT &kp FSLH &kp ESC
+                  &kp LGUI &mo 1 &kp SPACE   &kp RET &mo 2 &kp RALT
+                        >;
+                };
+                lower_layer {
+// -----------------------------------------------------------------------------------------
+// |  TAB |  1  |  2  |  3  |  4  |  5  |   |  6  |  7  |  8  |  9  |  0  | BKSP |
+// | BTCLR| BT1 | BT2 | BT3 | BT4 | BT5 |   | LFT | DWN |  UP | RGT |     |      |
+// | SHFT |     |     |     |     |     |   |     |     |     |     |     |      |
+//                    | GUI |     | SPC |   | ENT |     | ALT |
+                        display-name = "Lower";
+                        bindings = <
+   &kp TAB    &kp N1       &kp N2       &kp N3       &kp N4       &kp N5         &kp N6   &kp N7   &kp N8 &kp N9    &kp N0 &kp BSPC
+   &bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4   &kp LEFT &kp DOWN &kp UP &kp RIGHT &trans &trans
+   &kp LSHFT  &trans       &trans       &trans       &trans       &trans         &trans   &trans   &trans &trans    &trans &trans
+                          	        &kp LGUI     &trans       &kp SPACE      &kp RET  &trans   &kp RALT
+                        >;
+                };
 
-        raise_layer {
-            // -----------------------------------------------------------------------------------------
-            // |  TAB |  !  |  @  |  #  |  $  |  %  |   |  ^  |  &  |  *  |  (  |  )  | BKSP |
-            // | CTRL |     |     |     |     |     |   |  -  |  =  |  [  |  ]  |  \  |  `   |
-            // | SHFT |     |     |     |     |     |   |  _  |  +  |  {  |  }  | "|" |  ~   |
-            //                    | GUI |     | SPC |   | ENT |     | ALT |
-            display-name = "Raise";
-            bindings = <
-                &kp  TAB  &kp EXCL &kp AT &kp HASH &kp DLLR &kp PRCNT   &kp CARET &kp AMPS  &kp KP_MULTIPLY &kp LPAR &kp RPAR &kp BSPC
-                &kp LCTRL &trans   &trans &trans   &trans   &trans      &kp MINUS &kp EQUAL &kp LBKT        &kp RBKT &kp BSLH &kp GRAVE
-                &kp LSHFT &trans   &trans &trans   &trans   &trans      &kp UNDER &kp PLUS  &kp LBRC        &kp RBRC &kp PIPE &kp TILDE
-                &kp LGUI &trans   &kp SPACE   &kp RET   &trans    &kp RALT
-            >;
-        };
+                raise_layer {
+// -----------------------------------------------------------------------------------------
+// |  TAB |  !  |  @  |  #  |  $  |  %  |   |  ^  |  &  |  *  |  (  |  )  | BKSP |
+// | CTRL |     |     |     |     |     |   |  -  |  =  |  [  |  ]  |  \  |  `   |
+// | SHFT |     |     |     |     |     |   |  _  |  +  |  {  |  }  | "|" |  ~   |
+//                    | GUI |     | SPC |   | ENT |     | ALT |
+                        display-name = "Raise";
+                        bindings = <
+   &kp  TAB  &kp EXCL &kp AT &kp HASH &kp DLLR &kp PRCNT   &kp CARET &kp AMPS  &kp KP_MULTIPLY &kp LPAR &kp RPAR &kp BSPC
+   &kp LCTRL &trans   &trans &trans   &trans   &trans      &kp MINUS &kp EQUAL &kp LBKT        &kp RBKT &kp BSLH &kp GRAVE
+   &kp LSHFT &trans   &trans &trans   &trans   &trans      &kp UNDER &kp PLUS  &kp LBRC        &kp RBRC &kp PIPE &kp TILDE
+                    	     &kp LGUI &trans   &kp SPACE   &kp RET   &trans    &kp RALT
+                        >;
+                };
 
-        extra_1 {
-            status = "reserved";
-        };
+                extra_1 {
+                        status = "reserved";
+                };
 
-        extra_2 {
-            status = "reserved";
-        };
+                extra_2 {
+                        status = "reserved";
+                };
 
-        extra_3 {
-            status = "reserved";
+                extra_3 {
+                        status = "reserved";
+                };
         };
-    };
 };
 
-
-
-# ===========================================
-# FILE: ./config/includes/display_left.dtsi
-# ===========================================
-
-/ {
-    chosen {
-        zmk,display = &nice_view_display;
-    };
-};
-
-/ {
-    left_encoder: encoder_left {
-        compatible = "alps,ec11";
-        label = "LEFT_ENCODER";
-        a-gpios = <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-        b-gpios = <&pro_micro 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-        resolution = <4>;
-        status = "okay";
-    };
-
-    sensors {
-        compatible = "zmk,keymap-sensors";
-        sensors = <&left_encoder>;
-    };
-};
-
-&nice_view_display {
-    status = "okay";
-};
-
-/ {
-    // Use default Nice!View display - don't try to reference the standard ZMK widgets
-    left_display_status: left_display_status {
-        compatible = "zmk,display-status-screen";
-        label = "LEFT_STATUS_SCREEN";
-        status = "okay";
-    };
-};
-
-
-
-# ===========================================
-# FILE: ./config/includes/display_right.dtsi
-# ===========================================
-
-#include <zephyr/dt-bindings/display/screen_info.h>
-
-/ {
-    chosen {
-        zmk,display = &nice_view_display;
-    };
-};
-
-&nice_view_display {
-    status = "okay";
-};
-
-/ {
-    // Define your custom right display status screen
-    right_display_status: right_display_status {
-        compatible = "zmk,display-status-screen";
-        label = "RIGHT_STATUS_SCREEN";
-        status = "okay";
-        
-        waifu_widget: waifu_widget {
-            compatible = "zmk,widget-static-image";
-            status = "okay";
-            image = <&waifu_image>;
-        };
-    };
-    
-    // Define the image resource with corrected name
-    resources {
-        compatible = "zmk,display-resources";
-        
-        waifu_image: waifu_image {
-            compatible = "zmk,display-resource-image";
-            width = <128>;
-            height = <64>;
-            format = <SCREEN_INFO_MONO_VTILE_8>;
-            path = "/config/resources/images/waifu.bin";
-        };
-    };
-};
-
-
-
-# ===========================================
-# FILE: ./config/resources/images/waifu.bin
-# ===========================================
-binary
 
 
 # ===========================================
