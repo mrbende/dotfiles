@@ -1,29 +1,29 @@
 /**
- * Code Editor Layer
- * Specialized for nvim, tmux, and programming
+ * System and Bluetooth Layer
+ * Dedicated to system controls, bluetooth, and app launcher shortcuts
  */
 
- / {
-   keymap {
-     compatible = "zmk,keymap";
+/ {
+  keymap {
+    compatible = "zmk,keymap";
 
-     editor_layer {
-       display-name = "Editor";
-       bindings = <
+    system_layer {
+      display-name = "Sys";
+      bindings = <
 // ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮   ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮
 // │0              │1              │2              │3              │4              │5              │   │6              │7              │8              │9              │10             │11             │
-        &kp LG(S)   &kp LC(S)       &kp LC(W)       &kp LC(E)       &kp LC(R)       &vim_split_horz     &tmux_hsplit    &tmux_next      &tmux_prev      &tmux_sess      &tmux_copy      &trans
+    &out OUT_TOG    &bt BT_SEL 0    &bt BT_SEL 1    &bt BT_SEL 2    &bt BT_SEL 3    &bt BT_SEL 4        &kp LG(1)       &kp LG(2)       &kp LG(3)       &kp LG(4)       &kp LG(5)       &kp C_POWER
 // ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
 // │12             │13             │14             │15             │16             │17             │   │18             │19             │20             │21             │22             │23             │
-        &kp LG(A)   &kp LS(LA(S))   &kp LS(LA(D))   &kp LG(D)       &kp LG(F)       &vim_split_vert     &tmux_vsplit   &kp LS(LG(LBKT)) &kp LS(LG(RBKT)) &kp LC(G)      &kp LG(P)       &trans
+    &rst_boot 0 0   &bt BT_PRV      &bt BT_NXT      &bt BT_CLR      &kp LS(LA(G))   &kp LS(LA(T))       &kp LG(6)       &kp LG(7)       &kp LG(8)       &kp LG(9)       &kp LG(0)       &rst_boot 0 0
 // ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
 // │24             │25             │26             │27             │28             │29             │   │30             │31             │32             │33             │34             │35             │
-        &trans      &kp LG(Z)       &kp LG(X)       &kp LG(C)       &kp LG(V)       &kp LC(O)           &kp COLON       &kp UNDER       &kp PLUS        &kp PIPE        &kp DE          &trans
+    &trans          &kp LS(LG(Z))   &kp HYPR        &kp MEH         &kp LC(V)       &kp LC(B)            &kp LG(MINUS)   &kp LC(TAB)     &kp LS(LC(TAB)) &kp LG(EQUAL)   &kp LG(W)       &trans
 // ╰───────────────┴───────────────┴───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┴───────────────┴───────────────╯
 //                                                 │36             │37             │38             │   │39             │40             │41             │
-                                                    &trans          &trans          &trans              &trans          &mo Fn          &trans
+                                                    &trans          &kp CAPSLOCK    &trans              &trans          &trans          &trans
 //                                                 ╰───────────────┴───────────────┴───────────────╯   ╰───────────────┴───────────────┴───────────────╯
-       >;
-     };
-   };
- };
+      >;
+    };
+  };
+};

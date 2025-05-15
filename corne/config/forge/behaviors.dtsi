@@ -83,6 +83,18 @@
     };
 
     /*
+    - tap: #
+    - double tap: ##
+    */
+    /omit-if-no-ref/ hash_td: tap_dance_hash {
+      compatible = "zmk,behavior-tap-dance";
+      label = "TAP_DANCE_DASH";
+      #binding-cells = <0>;
+      tapping-term-ms = <200>;
+      bindings = <&kp HASH>, <&TRIPLE_HASH>;
+    };
+
+    /*
     - tap: reset keyboard
     - hold: enter bootloader mode
     */

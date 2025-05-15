@@ -6,11 +6,11 @@
 #include <dt-bindings/zmk/outputs.h>
 
 // Layers
-#define L1 0  // Base/QWERTY
-#define L2 1  // Navigation/Numbers
-#define Fn 2  // Function/Window Management  
+#define L0 0  // Base/QWERTY
+#define SY 1  // Symbols/Numbers
+#define FN 2  // Function/Window Management  
 #define ED 3  // Code Editor
-#define SY 4  // System/Macros
+#define MA 4  // Macros/System
 
 // Meh key
 #define MEH LS(LC(LALT))
@@ -29,14 +29,14 @@
 #define YABAI_SPC2 LS(LA(N2))  // Space 2 (browser-work)
 #define YABAI_SPC3 LS(LA(N3))  // Space 3 (slack)
 
+// Vim keycodes (standardized definitions)
+#define VIM_ZZ LS(Z)        // Vim ZZ (save and quit)
+#define VIM_VS LS(V)        // Vim visual selection
+
 // Behaviors Constants
 #define TAPPING_TERM_MS 280
 #define QUICK_TAP_MS 175
 #define REQUIRE_PRIOR_IDLE_MS 150
-
-// Combos Constants
-#define COMBO_TERM_DEFAULT 30
-#define COMBO_QUICK_TAP_MS 100
 
 // Key positions per hand
 #define KEYS_L 0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29
@@ -45,16 +45,15 @@
 
 #include "behaviors.dtsi"
 #include "macros.dtsi"
-#include "combos.dtsi"
 
 // Alpha layer: uncomment desired, comment the others
 // #include "L1_colemak-dh.dtsi"
 // #include "L1_colemak.dtsi"
 // #include "L1_dvorak.dtsi"
-#include "L1_qwerty.dtsi"
+#include "L0_qwerty.dtsi"
 
 // Other layers
-#include "L2_navigation.dtsi"
-#include "L3_function.dtsi"
-#include "L4_editor.dtsi"
-#include "L5_system.dtsi"
+#include "L1_symbols.dtsi"
+#include "L2_function.dtsi"
+#include "L3_editor.dtsi"
+#include "L4_system.dtsi"
