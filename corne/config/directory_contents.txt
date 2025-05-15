@@ -1,0 +1,661 @@
+# Directory Structure
+.
+├── corne.conf
+├── corne.keymap
+├── directory_contents.txt
+├── forge
+│   ├── base.dtsi
+│   ├── behaviors.dtsi
+│   ├── combos.dtsi
+│   ├── L1_qwerty.dtsi
+│   ├── L2_navigation.dtsi
+│   ├── L3_function.dtsi
+│   ├── L4_editor.dtsi
+│   ├── L5_system.dtsi
+│   └── macros.dtsi
+└── west.yml
+
+2 directories, 13 files
+
+# File Contents
+
+
+# ===========================================
+# FILE: ./corne.conf
+# ===========================================
+
+# Turn on logging, and set ZMK logging to debug output
+# CONFIG_ZMK_USB_LOGGING=y
+
+# Reset BT connections on next firmware boot
+# CONFIG_ZMK_BLE_CLEAR_BONDS_ON_START=y
+
+# Boost Bluetooth TX power
+CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
+
+# Require passkey on pairing
+CONFIG_ZMK_BLE_PASSKEY_ENTRY=y
+
+# Sleep timeout 30 minutes
+CONFIG_ZMK_SLEEP=y
+CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=1800000
+
+# Enable eager debouncing
+CONFIG_ZMK_KSCAN_DEBOUNCE_PRESS_MS=1
+CONFIG_ZMK_KSCAN_DEBOUNCE_RELEASE_MS=7
+
+# Fix battery reporting on Windows
+CONFIG_BT_GATT_ENFORCE_SUBSCRIPTION=n
+
+# Experimental: BLE improvements
+CONFIG_ZMK_BLE_EXPERIMENTAL_FEATURES=y
+
+# Report battery peripheral battery level
+CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY=y
+CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING=y
+
+
+
+# ===========================================
+# FILE: ./corne.keymap
+# ===========================================
+
+/*
+ * Copyright (c) 2020 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include "./forge/base.dtsi"
+
+
+
+# ===========================================
+# FILE: ./forge/base.dtsi
+# ===========================================
+
+// ZMK Core Includes
+#include <behaviors.dtsi>
+// #include <behaviors/num_word.dtsi> // requires https://github.com/urob/zmk-auto-layer module
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
+
+// Layers
+#define L1 0  // Base/QWERTY
+#define L2 1  // Navigation/Numbers
+#define Fn 2  // Function/Window Management  
+#define ED 3  // Code Editor
+#define SY 4  // System/Macros
+
+// Meh key
+#define MEH LS(LC(LALT))
+// Hyper key (Ctrl+Shift+Alt+Cmd)
+#define HYPR LS(LC(LA(LGUI)))
+
+// Custom keycodes for tmux
+#define TMUX_PRE LC(A)    // Ctrl+A (tmux prefix)
+#define TMUX_SPLT_H TMUX_PRE LS(MINUS)  // Tmux horizontal split
+#define TMUX_SPLT_V TMUX_PRE LS(PIPE)   // Tmux vertical split
+#define TMUX_NEXT TMUX_PRE N            // Next tmux window
+#define TMUX_PREV TMUX_PRE P            // Previous tmux window
+#define TMUX_SESS TMUX_PRE F            // Tmux sessionizer (from your config)
+#define TMUX_COPY TMUX_PRE V            // Tmux copy mode
+
+// Custom keycodes for vim
+#define VIM_SVH LC(W) V    // Split vertically (:vsp)
+#define VIM_SHZ LC(W) S    // Split horizontally (:sp)
+
+// Custom keycodes for yabai
+#define YABAI_LFT LA(H)    // Focus window left
+#define YABAI_RGT LA(L)    // Focus window right
+#define YABAI_UP LA(K)     // Focus window up
+#define YABAI_DWN LA(J)    // Focus window down
+#define YABAI_SPC1 LS(LA(N1))  // Space 1 (terminal)
+#define YABAI_SPC2 LS(LA(N2))  // Space 2 (browser-work)
+#define YABAI_SPC3 LS(LA(N3))  // Space 3 (slack)
+
+// Behaviors Constants
+#define TAPPING_TERM_MS 280
+#define QUICK_TAP_MS 175
+#define REQUIRE_PRIOR_IDLE_MS 150
+
+// Combos Constants
+#define COMBO_TERM_DEFAULT 30
+#define COMBO_QUICK_TAP_MS 100
+
+// Key positions per hand
+#define KEYS_L 0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29
+#define KEYS_R 6 7 8 9 10 11 18 19 20 21 22 23 30 31 32 33 34 35
+#define THUMBS 36 37 38 39 40 41
+
+#include "behaviors.dtsi"
+#include "macros.dtsi"
+#include "combos.dtsi"
+
+// Alpha layer: uncomment desired, comment the others
+// #include "L1_colemak-dh.dtsi"
+// #include "L1_colemak.dtsi"
+// #include "L1_dvorak.dtsi"
+#include "L1_qwerty.dtsi"
+
+// Other layers
+#include "L2_navigation.dtsi"
+#include "L3_function.dtsi"
+#include "L4_editor.dtsi"
+#include "L5_system.dtsi"
+
+
+
+# ===========================================
+# FILE: ./forge/behaviors.dtsi
+# ===========================================
+
+// ZMK Behaviors Configuration
+&mt {
+  flavor = "balanced";
+  tapping-term-ms = <TAPPING_TERM_MS>;
+  quick-tap-ms = <QUICK_TAP_MS>;
+  require-prior-idle-ms = <REQUIRE_PRIOR_IDLE_MS>;
+};
+
+&lt {
+  flavor = "balanced";
+  tapping-term-ms = <TAPPING_TERM_MS>;
+  quick-tap-ms = <QUICK_TAP_MS>;
+  require-prior-idle-ms = <REQUIRE_PRIOR_IDLE_MS>;
+};
+
+&sk {
+  quick-release;
+};
+
+
+/ {
+  behaviors {
+    /*
+    Home Row Mods
+
+    - tap: &kp <PARAM_2>
+    - hold: &kp <PARAM_1>
+
+    Example: &hrml LCMD T
+    */
+    /omit-if-no-ref/ hrml: hrm_left {
+      bindings = <&kp>, <&kp>;
+      compatible = "zmk,behavior-hold-tap";
+      flavor = "balanced";
+      hold-trigger-key-positions = <KEYS_R THUMBS>;
+      hold-trigger-on-release;
+      tapping-term-ms = <TAPPING_TERM_MS>;
+      quick-tap-ms = <QUICK_TAP_MS>;
+      require-prior-idle-ms = <REQUIRE_PRIOR_IDLE_MS>;
+      #binding-cells = <2>;
+    };
+
+    /omit-if-no-ref/ hrmr: hrm_right {
+      bindings = <&kp>, <&kp>;
+      compatible = "zmk,behavior-hold-tap";
+      flavor = "balanced";
+      hold-trigger-key-positions = <KEYS_L THUMBS>;
+      hold-trigger-on-release;
+      tapping-term-ms = <TAPPING_TERM_MS>;
+      quick-tap-ms = <QUICK_TAP_MS>;
+      require-prior-idle-ms = <REQUIRE_PRIOR_IDLE_MS>;
+      #binding-cells = <2>;
+    };
+
+    /*
+    - tap: sticky shift
+    - double-tap: caps-word (shift + tap mod-morph)
+    - hold: shift
+
+    From: https://github.com/urob/zmk-config/
+    */
+    /omit-if-no-ref/ smart_shift: smart_shift {
+      compatible = "zmk,behavior-mod-morph";
+      bindings = <&sk RSHFT>, <&caps_word>;
+      mods = <(MOD_RSFT)>;
+      #binding-cells = <0>;
+    };
+
+
+    /*
+    - tap: backspace
+    - hold: repeat backspace
+    - shift + tap: delete
+    - shift + hold: repeat delete
+
+    From: https://zmk.dev/docs/behaviors/mod-morph#advanced-configuration
+    */
+    /omit-if-no-ref/ bkspc_del: backspace_delete {
+      compatible = "zmk,behavior-mod-morph";
+      bindings = <&kp BACKSPACE>, <&kp DELETE>;
+      mods = <(MOD_LSFT|MOD_RSFT)>;
+      #binding-cells = <0>;
+    };
+
+    /*
+    - tap: reset keyboard
+    - hold: enter bootloader mode
+    */
+    /omit-if-no-ref/ rst_boot: rst_boot {
+        compatible = "zmk,behavior-hold-tap";
+        #binding-cells = <2>;
+        tapping-term-ms = <500>;
+        flavor = "tap-preferred";
+        bindings = <&bootloader>, <&sys_reset>;
+    };
+  };
+};
+
+
+
+# ===========================================
+# FILE: ./forge/combos.dtsi
+# ===========================================
+
+/* Copied (modified) from https://github.com/caksoylar/zmk-config */
+#define COMBO(NAME, BINDINGS, KEYPOS, LAYERS, TERM, QUICKTAP) \
+  combo_##NAME { \
+    timeout-ms = <TERM>; \
+    bindings = <BINDINGS>; \
+    key-positions = <KEYPOS>; \
+    layers = <LAYERS>; \
+    require-prior-idle-ms = <QUICKTAP>; \
+  };
+
+/ {
+  combos {
+    compatible = "zmk,combos";
+    /*
+      KEY POSITIONS
+      ╭────────────────────────╮  ╭────────────────────────╮
+      │ 0   1   2   3   4   5  │  │ 6   7   8   9   10  11 │
+      │ 12  13  14  15  16  17 │  │ 18  19  20  21  22  23 │
+      │ 24  25  26  27  28  29 │  │ 30  31  32  33  34  35 │
+      ╰───────────╮ 36  37  38 │  │ 39  40  41 ╭───────────╯
+                  ╰────────────╯  ╰────────────╯
+    */
+
+    /* Symbols */
+    // Left
+    COMBO(excl, &kp EXCL, 1 13, L1 L2, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(at, &kp AT, 2 14, L1 L2, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(hash, &kp HASH, 3 15, L1 L2, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(dollar, &kp DOLLAR, 4 16, L1 L2, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(percent, &kp PERCENT, 5 17, L1 L2, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(caret, &kp CARET, 13 25, L1 L2, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(ampersand, &kp AMPERSAND, 14 26, L1 L2, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(star, &kp STAR, 15 27, L1 L2, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(lpar, &kp LPAR, 16 28, L1 L2, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(rpar, &kp RPAR, 17 29, L1 L2, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+
+    // Right
+    COMBO(minus, &kp MINUS, 7 19, L1 L2 Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(equal, &kp EQUAL, 8 20, L1 L2 Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(slash, &kp SLASH, 9 21, L1 L2 Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(pgup, &kp PG_UP, 6 18, L1 L2 Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(pgdn, &kp PG_DN, 18 30, L1 L2 Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(lbkt, &kp LBKT, 19 31, L1 L2 Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(rbkt, &kp RBKT, 20 32, L1 L2 Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(backslash, &kp BACKSLASH, 21 33, L1 L2 Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+
+    /* Bluetooth */
+    COMBO(bt_clear, &bt BT_CLR, 1 2 3 4, Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(bt_sel_0, &bt BT_SEL 0, 1 13, Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(bt_sel_1, &bt BT_SEL 1, 2 14, Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(bt_sel_2, &bt BT_SEL 2, 3 15, Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(bt_sel_3, &bt BT_SEL 3, 4 16, Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+    COMBO(bt_sel_4, &bt BT_SEL 4, 5 17, Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+
+    /* Media */
+    COMBO(play, &kp C_PP, 6 7, L1 L2 Fn, COMBO_TERM_DEFAULT, COMBO_QUICK_TAP_MS)
+  };
+};
+
+
+
+# ===========================================
+# FILE: ./forge/L1_qwerty.dtsi
+# ===========================================
+
+/**
+ * Alpha Layer - QWERTY (Base)
+ * Optimized for developer workflow with quick access to common keys
+ */
+
+/ {
+  keymap {
+    compatible = "zmk,keymap";
+
+    qwerty_layer {
+      display-name = "Base";
+      bindings = <
+// ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮   ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮
+// │0              │1              │2              │3              │4              │5              │   │6              │7              │8              │9              │10             │11             │
+    &kp ESC         &kp Q           &kp W           &kp E           &kp R           &kp T               &kp Y           &kp U           &kp I           &kp O           &kp P           &bkspc_del
+// ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
+// │12             │13             │14             │15             │16             │17             │   │18             │19             │20             │21             │22             │23             │
+    &kp TAB         &kp A           &hrml LCTRL S   &hrml LALT D    &hrml LCMD F    &kp G               &kp H           &hrmr LCMD J    &hrmr LALT K    &hrmr LCTRL L   &kp SQT         &kp ENTER
+// ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
+// │24             │25             │26             │27             │28             │29             │   │30             │31             │32             │33             │34             │35             │
+    &lt ED GRAVE    &kp Z           &kp X           &kp C           &kp V           &kp B               &kp N           &kp M           &kp COMMA       &kp DOT         &kp SEMICOLON   &lt SY SLASH
+// ╰───────────────┴───────────────┴───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┴───────────────┴───────────────╯
+//                                                 │36             │37             │38             │   │39             │40             │41             │
+                                                    &kp LCTRL       &mt LSHFT SPACE &mo L2              &mo L2          &smart_shift    &kp BSPC
+//                                                 ╰───────────────┴───────────────┴───────────────╯   ╰───────────────┴───────────────┴───────────────╯
+      >;
+    };
+  };
+};
+
+
+
+# ===========================================
+# FILE: ./forge/L2_navigation.dtsi
+# ===========================================
+
+/**
+ * Navigation, Numbers, and Media Controls Layer
+ * Optimized for navigation and number access with media controls
+ */
+
+/ {
+  keymap {
+    compatible = "zmk,keymap";
+
+    layer_2 {
+      display-name = "Nav";
+      bindings = <
+// ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮   ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮
+// │0              │1              │2              │3              │4              │5              │   │6              │7              │8              │9              │10             │11             │
+    &trans          &kp N1          &kp N2          &kp N3          &kp N4          &kp N5              &kp HOME        &kp PG_DN       &kp PG_UP       &kp END         &kp C_MUTE      &trans
+// ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
+// │12             │13             │14             │15             │16             │17             │   │18             │19             │20             │21             │22             │23             │
+    &trans          &kp N6          &kp N7          &kp N8          &kp N9          &kp N0              &kp LEFT        &kp DOWN        &kp UP          &kp RIGHT       &kp C_PP        &trans
+// ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
+// │24             │25             │26             │27             │28             │29             │   │30             │31             │32             │33             │34             │35             │
+    &trans          &kp TILDE       &kp MINUS       &kp EQUAL       &kp LBKT        &kp RBKT            &kp C_PREV      &kp C_VOL_DN    &kp C_VOL_UP    &kp C_NEXT      &kp DEL         &trans
+// ╰───────────────┴───────────────┴───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┴───────────────┴───────────────╯
+//                                                 │36             │37             │38             │   │39             │40             │41             │
+                                                    &trans          &trans          &trans              &trans          &mo Fn          &trans
+//                                                 ╰───────────────┴───────────────┴───────────────╯   ╰───────────────┴───────────────┴───────────────╯
+      >;
+    };
+  };
+};
+
+
+
+# ===========================================
+# FILE: ./forge/L3_function.dtsi
+# ===========================================
+
+/**
+ * Function / Yabai Window Management Layer
+ * Includes function keys and yabai window management commands
+ */
+
+/ {
+  keymap {
+    compatible = "zmk,keymap";
+
+    fn_layer {
+      display-name = "Fn";
+      bindings = <
+// ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮   ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮
+// │0              │1              │2              │3              │4              │5              │   │6              │7              │8              │9              │10             │11             │
+    &kp F1          &kp F2          &kp F3          &kp F4          &kp F5          &kp F6              &kp YABAI_SPC1  &kp YABAI_SPC2  &kp YABAI_SPC3  &kp LS(LA(N4))  &kp LS(LA(N5))  &trans
+// ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
+// │12             │13             │14             │15             │16             │17             │   │18             │19             │20             │21             │22             │23             │
+    &kp F7          &kp F8          &kp F9          &kp F10         &kp F11         &kp F12             &kp YABAI_LFT   &kp YABAI_DWN   &kp YABAI_UP    &kp YABAI_RGT   &kp LA(LC(ENTER)) &trans
+// ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
+// │24             │25             │26             │27             │28             │29             │   │30             │31             │32             │33             │34             │35             │
+    &trans          &kp LA(LBKT)    &kp LA(RBKT)    &kp LS(LA(D))   &kp LS(LA(F))   &kp LS(LA(B))       &kp LA(LC(H))   &kp LA(LC(J))   &kp LA(LC(K))   &kp LA(LC(L))   &kp LA(LC(SPACE)) &trans
+// ╰───────────────┴───────────────┴───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┴───────────────┴───────────────╯
+//                                                 │36             │37             │38             │   │39             │40             │41             │
+                                                    &trans          &kp C_BRI_DN    &kp C_BRI_UP        &mo SY          &trans          &trans
+//                                                 ╰───────────────┴───────────────┴───────────────╯   ╰───────────────┴───────────────┴───────────────╯
+      >;
+    };
+  };
+};
+
+
+
+# ===========================================
+# FILE: ./forge/L4_editor.dtsi
+# ===========================================
+
+/**
+ * Code Editor Layer
+ * Specialized for nvim, tmux, and programming
+ */
+
+/ {
+  keymap {
+    compatible = "zmk,keymap";
+
+    editor_layer {
+      display-name = "Editor";
+      bindings = <
+// ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮   ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮
+// │0              │1              │2              │3              │4              │5              │   │6              │7              │8              │9              │10             │11             │
+    &kp LG(S)       &kp LC(S)       &kp LC(W)       &kp LC(E)       &kp LC(R)       &kp VIM_SHZ         &kp TMUX_SPLT_H &kp TMUX_NEXT   &kp TMUX_PREV   &kp TMUX_SESS   &kp TMUX_COPY   &trans
+// ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
+// │12             │13             │14             │15             │16             │17             │   │18             │19             │20             │21             │22             │23             │
+    &kp LG(A)       &kp LS(LA(S))   &kp LS(LA(D))   &kp LG(D)       &kp LG(F)       &kp VIM_SVH         &kp TMUX_SPLT_V &kp LS(LG(LBKT))&kp LS(LG(RBKT))&kp LC(G)       &kp LG(P)       &trans
+// ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
+// │24             │25             │26             │27             │28             │29             │   │30             │31             │32             │33             │34             │35             │
+    &trans          &kp LG(Z)       &kp LG(X)       &kp LG(C)       &kp LG(V)       &kp LC(O)            &kp COLON       &kp UNDER       &kp PLUS        &kp PIPE        &kp DEL         &trans
+// ╰───────────────┴───────────────┴───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┴───────────────┴───────────────╯
+//                                                 │36             │37             │38             │   │39             │40             │41             │
+                                                    &trans          &trans          &trans              &trans          &mo Fn          &trans
+//                                                 ╰───────────────┴───────────────┴───────────────╯   ╰───────────────┴───────────────┴───────────────╯
+      >;
+    };
+  };
+};
+
+
+
+# ===========================================
+# FILE: ./forge/L5_system.dtsi
+# ===========================================
+
+/**
+ * System Controls and Macros Layer
+ * Includes Bluetooth, reset controls, and specialized dev macros
+ */
+
+/ {
+  keymap {
+    compatible = "zmk,keymap";
+
+    system_layer {
+      display-name = "System";
+      bindings = <
+// ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮   ╭───────────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────╮
+// │0              │1              │2              │3              │4              │5              │   │6              │7              │8              │9              │10             │11             │
+    &out OUT_TOG    &bt BT_SEL 0    &bt BT_SEL 1    &bt BT_SEL 2    &bt BT_SEL 3    &bt BT_SEL 4        &kp LG(1)       &kp LG(2)       &kp LG(3)       &kp LG(4)       &kp LG(5)       &kp C_POWER
+// ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
+// │12             │13             │14             │15             │16             │17             │   │18             │19             │20             │21             │22             │23             │
+    &rst_boot 0 0   &bt BT_PRV      &bt BT_NXT      &bt BT_CLR      &kp LS(LA(G))   &kp LS(LA(T))       &kp LG(6)       &kp LG(7)       &kp LG(8)       &kp LG(9)       &kp LG(0)       &rst_boot 0 0
+// ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
+// │24             │25             │26             │27             │28             │29             │   │30             │31             │32             │33             │34             │35             │
+    &trans          &kp LS(LG(Z))   &kp LC(X)       &kp LS(LC(C))   &kp LC(V)       &kp LC(B)            &kp LG(MINUS)   &kp LC(TAB)     &kp LS(LC(TAB)) &kp LG(EQUAL)   &kp LG(W)       &trans
+// ╰───────────────┴───────────────┴───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┴───────────────┴───────────────╯
+//                                                 │36             │37             │38             │   │39             │40             │41             │
+                                                    &trans          &kp CAPSLOCK    &trans              &trans          &trans          &trans
+//                                                 ╰───────────────┴───────────────┴───────────────╯   ╰───────────────┴───────────────┴───────────────╯
+      >;
+    };
+  };
+};
+
+
+
+# ===========================================
+# FILE: ./forge/macros.dtsi
+# ===========================================
+
+/ {
+  macros {
+    /*
+      Temporarily switches to a layer (&mo) while a modifier is held. This is
+      an implementation of QMK's `LM()` using ZMK's parameterized macros.
+
+      Params:
+        1. Layer to switch to
+        2. Modifier to press while layer is active
+
+      Example:
+        `&lm L1 LSHIFT`
+     */
+    /omit-if-no-ref/ lm: lm {
+      wait-ms = <0>;
+      tap-ms = <0>;
+      compatible = "zmk,behavior-macro-two-param";
+      #binding-cells = <2>;
+      bindings = <&macro_param_1to1>,
+        <&macro_press &mo MACRO_PLACEHOLDER>,
+        <&macro_param_2to1>,
+        <&macro_press &kp MACRO_PLACEHOLDER>,
+        <&macro_pause_for_release>,
+        <&macro_param_2to1>,
+        <&macro_release &kp MACRO_PLACEHOLDER>,
+        <&macro_param_1to1>,
+        <&macro_release &mo MACRO_PLACEHOLDER>;
+    };
+
+    /*
+      Practically identical to &sl, except it triggers a `K_CANCEL` right before to clear
+      any active smart layers. This prevents nested/stacked layer activation when needed.
+
+      Params:
+        1. Layer to switch to
+
+      Example:
+        `&csl L1`
+     */
+    /omit-if-no-ref/ csl: clear_sl {
+      wait-ms = <0>;
+      tap-ms = <0>;
+      compatible = "zmk,behavior-macro-one-param";
+      #binding-cells = <1>;
+      bindings = <&macro_tap &kp K_CANCEL>,
+        <&macro_param_1to1>,
+        <&macro_press &sl MACRO_PLACEHOLDER>,
+        <&macro_pause_for_release>,
+        <&macro_param_1to1>,
+        <&macro_release &sl MACRO_PLACEHOLDER>;
+    };
+
+    /*
+      Practically identical to &mo, except it triggers a `K_CANCEL` right before to clear
+      any active smart layers. This prevents nested/stacked layer activation when needed.
+      It's also useful to maintain more consistent expectations when holding a cancel/exit layer
+      key from a smart layer.
+
+      Params:
+        1. Layer to switch to
+
+      Example:
+        `&cmo L1`
+     */
+    /omit-if-no-ref/ cmo: clear_mo {
+      wait-ms = <0>;
+      tap-ms = <0>;
+      compatible = "zmk,behavior-macro-one-param";
+      #binding-cells = <1>;
+      bindings = <&macro_tap &kp K_CANCEL>,
+        <&macro_param_1to1>,
+        <&macro_press &mo MACRO_PLACEHOLDER>,
+        <&macro_pause_for_release>,
+        <&macro_param_1to1>,
+        <&macro_release &mo MACRO_PLACEHOLDER>;
+    };
+
+    /* 
+      Macro for triggering "go to definition" in your editor 
+    */
+    /omit-if-no-ref/ goto_def: goto_definition {
+      compatible = "zmk,behavior-macro";
+      #binding-cells = <0>;
+      bindings = <&kp LG(LBKT)>;
+      label = "GOTO_DEFINITION";
+    };
+
+    /* 
+      Macro for tmux vertical split (Ctrl+A + |) 
+    */
+    /omit-if-no-ref/ tmux_vsplit: tmux_vertical_split {
+      compatible = "zmk,behavior-macro";
+      #binding-cells = <0>;
+      bindings = 
+        <&macro_press &kp LCTRL>,
+        <&macro_tap &kp A>,
+        <&macro_release &kp LCTRL>,
+        <&macro_tap &kp LS(PIPE)>;
+      label = "TMUX_VERTICAL_SPLIT";
+    };
+
+    /* 
+      Macro for tmux horizontal split (Ctrl+A + -) 
+    */
+    /omit-if-no-ref/ tmux_hsplit: tmux_horizontal_split {
+      compatible = "zmk,behavior-macro";
+      #binding-cells = <0>;
+      bindings = 
+        <&macro_press &kp LCTRL>,
+        <&macro_tap &kp A>,
+        <&macro_release &kp LCTRL>,
+        <&macro_tap &kp MINUS>;
+      label = "TMUX_HORIZONTAL_SPLIT";
+    };
+
+    /* 
+      Macro for vim save (:w) 
+    */
+    /omit-if-no-ref/ vim_save: vim_save {
+      compatible = "zmk,behavior-macro";
+      #binding-cells = <0>;
+      bindings = 
+        <&macro_tap &kp COLON>,
+        <&macro_tap &kp W>,
+        <&macro_tap &kp ENTER>;
+      label = "VIM_SAVE";
+    };
+
+    /* 
+      Macro for vim save and quit (:wq) 
+    */
+    /omit-if-no-ref/ vim_save_quit: vim_save_quit {
+      compatible = "zmk,behavior-macro";
+      #binding-cells = <0>;
+      bindings = 
+        <&macro_tap &kp COLON>,
+        <&macro_tap &kp W>,
+        <&macro_tap &kp Q>,
+        <&macro_tap &kp ENTER>;
+      label = "VIM_SAVE_QUIT";
+    };
+  };
+};
+
+
+
+# ===========================================
+# FILE: ./west.yml
+# ===========================================
+
+- name: zmk-auto-layer
+  remote: urob
+  revision: main
+
+- name: zmk-tri-state
+  remote: urob
+  revision: main
+
+

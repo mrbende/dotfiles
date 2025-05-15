@@ -1,0 +1,97 @@
+// ZMK Behaviors Configuration
+&mt {
+  flavor = "balanced";
+  tapping-term-ms = <TAPPING_TERM_MS>;
+  quick-tap-ms = <QUICK_TAP_MS>;
+  require-prior-idle-ms = <REQUIRE_PRIOR_IDLE_MS>;
+};
+
+&lt {
+  flavor = "balanced";
+  tapping-term-ms = <TAPPING_TERM_MS>;
+  quick-tap-ms = <QUICK_TAP_MS>;
+  require-prior-idle-ms = <REQUIRE_PRIOR_IDLE_MS>;
+};
+
+&sk {
+  quick-release;
+};
+
+
+/ {
+  behaviors {
+    /*
+    Home Row Mods
+
+    - tap: &kp <PARAM_2>
+    - hold: &kp <PARAM_1>
+
+    Example: &hrml LCMD T
+    */
+    /omit-if-no-ref/ hrml: hrm_left {
+      bindings = <&kp>, <&kp>;
+      compatible = "zmk,behavior-hold-tap";
+      flavor = "balanced";
+      hold-trigger-key-positions = <KEYS_R THUMBS>;
+      hold-trigger-on-release;
+      tapping-term-ms = <TAPPING_TERM_MS>;
+      quick-tap-ms = <QUICK_TAP_MS>;
+      require-prior-idle-ms = <REQUIRE_PRIOR_IDLE_MS>;
+      #binding-cells = <2>;
+    };
+
+    /omit-if-no-ref/ hrmr: hrm_right {
+      bindings = <&kp>, <&kp>;
+      compatible = "zmk,behavior-hold-tap";
+      flavor = "balanced";
+      hold-trigger-key-positions = <KEYS_L THUMBS>;
+      hold-trigger-on-release;
+      tapping-term-ms = <TAPPING_TERM_MS>;
+      quick-tap-ms = <QUICK_TAP_MS>;
+      require-prior-idle-ms = <REQUIRE_PRIOR_IDLE_MS>;
+      #binding-cells = <2>;
+    };
+
+    /*
+    - tap: sticky shift
+    - double-tap: caps-word (shift + tap mod-morph)
+    - hold: shift
+
+    From: https://github.com/urob/zmk-config/
+    */
+    /omit-if-no-ref/ smart_shift: smart_shift {
+      compatible = "zmk,behavior-mod-morph";
+      bindings = <&sk RSHFT>, <&caps_word>;
+      mods = <(MOD_RSFT)>;
+      #binding-cells = <0>;
+    };
+
+
+    /*
+    - tap: backspace
+    - hold: repeat backspace
+    - shift + tap: delete
+    - shift + hold: repeat delete
+
+    From: https://zmk.dev/docs/behaviors/mod-morph#advanced-configuration
+    */
+    /omit-if-no-ref/ bkspc_del: backspace_delete {
+      compatible = "zmk,behavior-mod-morph";
+      bindings = <&kp BACKSPACE>, <&kp DELETE>;
+      mods = <(MOD_LSFT|MOD_RSFT)>;
+      #binding-cells = <0>;
+    };
+
+    /*
+    - tap: reset keyboard
+    - hold: enter bootloader mode
+    */
+    /omit-if-no-ref/ rst_boot: rst_boot {
+        compatible = "zmk,behavior-hold-tap";
+        #binding-cells = <2>;
+        tapping-term-ms = <500>;
+        flavor = "tap-preferred";
+        bindings = <&bootloader>, <&sys_reset>;
+    };
+  };
+};
