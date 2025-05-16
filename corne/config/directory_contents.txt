@@ -1,16 +1,8 @@
 # Directory Structure
 .
-├── CMakeLists.txt
 ├── corne.conf
 ├── corne.keymap
 ├── directory_contents.txt
-├── display
-│   ├── CMakeLists.txt
-│   ├── custom_status_screen.c
-│   ├── Kconfig.overlay
-│   ├── waifu_data.h
-│   ├── waifu_image.c
-│   └── waifu.bin
 ├── forge
 │   ├── base.dtsi
 │   ├── behaviors.dtsi
@@ -23,18 +15,9 @@
 ├── README.md
 └── west.yml
 
-3 directories, 20 files
+2 directories, 13 files
 
 # File Contents
-
-
-# ===========================================
-# FILE: ./CMakeLists.txt
-# ===========================================
-
-add_subdirectory(display)
-
-
 
 
 # ===========================================
@@ -46,8 +29,6 @@ add_subdirectory(display)
 
 # Reset BT connections on next firmware boot
 # CONFIG_ZMK_BLE_CLEAR_BONDS_ON_START=y
-# Enable display and custom screen
-CONFIG_ZMK_DISPLAY=y
 
 # nice!view settings
 CONFIG_ZMK_DISPLAY_WORK_QUEUE_DEDICATED=y
@@ -77,6 +58,10 @@ CONFIG_ZMK_BLE_EXPERIMENTAL_FEATURES=y
 CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY=y
 CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING=y
 
+# Turn on logging, and set ZMK logging to debug output
+# CONFIG_ZMK_USB_LOGGING=y
+# CONFIG_ZMK_LOG_LEVEL_DBG=y
+
 
 
 # ===========================================
@@ -90,125 +75,6 @@ CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING=y
  */
 
 #include "./forge/base.dtsi"
-
-
-
-# ===========================================
-# FILE: ./display/CMakeLists.txt
-# ===========================================
-
-if(CONFIG_ZMK_DISPLAY)
-    # Add status screen and image files
-    target_sources_ifdef(CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM app PRIVATE 
-        ${CMAKE_CURRENT_SOURCE_DIR}/custom_status_screen.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/waifu_image.c
-    )
-    
-    # Generate waifu_data.h from waifu.bin
-    add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/waifu_data.h
-        COMMAND xxd -i ${CMAKE_CURRENT_SOURCE_DIR}/waifu.bin > ${CMAKE_CURRENT_BINARY_DIR}/waifu_data.h
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/waifu.bin
-    )
-    
-    target_include_directories(app PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-    add_custom_target(waifu_data DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/waifu_data.h)
-    add_dependencies(app waifu_data)
-endif()
-
-
-
-# ===========================================
-# FILE: ./display/custom_status_screen.c
-# ===========================================
-
-#include <zmk/display/status_screen.h>
-#include <lvgl.h>
-#include <zephyr/kernel.h>
-
-#ifdef SHIELD_CORNE_RIGHT
-// Only include the waifu image on the right side
-extern const lv_img_dsc_t waifu_image;
-
-lv_obj_t *zmk_display_status_screen() {
-    // Create a full-screen container
-    lv_obj_t *container = lv_obj_create(lv_scr_act());
-    lv_obj_set_size(container, 160, 68);
-    lv_obj_set_pos(container, 0, 0);
-    
-    // Create the image widget and place it in the container
-    lv_obj_t *image = lv_img_create(container);
-    lv_img_set_src(image, &waifu_image);
-    lv_obj_align(image, LV_ALIGN_CENTER, 0, 0);
-    
-    return container;
-}
-#endif // SHIELD_CORNE_RIGHT
-
-
-
-# ===========================================
-# FILE: ./display/Kconfig.overlay
-# ===========================================
-
-# Only enable custom screen on the right side
-if SHIELD_CORNE_RIGHT
-
-config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
-    bool "Custom waifu display screen"
-    default y
-    depends on ZMK_DISPLAY
-
-# Disable default widgets for the right side only
-config ZMK_WIDGET_BATTERY_STATUS
-    default n
-
-config ZMK_WIDGET_OUTPUT_STATUS
-    default n
-
-config ZMK_WIDGET_LAYER_STATUS
-    default n
-
-config ZMK_WIDGET_WPM_STATUS
-    default n
-
-endif # SHIELD_CORNE_RIGHT
-
-
-
-# ===========================================
-# FILE: ./display/waifu_data.h
-# ===========================================
-
-
-# ===========================================
-# FILE: ./display/waifu_image.c
-# ===========================================
-
-#ifdef SHIELD_CORNE_RIGHT
-// Only include this on the right side
-
-#include <lvgl.h>
-#include <zephyr/kernel.h>
-
-// Include the generated header 
-#include "waifu_data.h"
-
-// Image descriptor for the waifu image
-const lv_img_dsc_t waifu_image = {
-    .header.cf = LV_IMG_CF_INDEXED_1BIT,
-    .header.w = 160,
-    .header.h = 68,
-    .data_size = waifu_bin_len,  // Match the generated variable name
-    .data = waifu_bin,           // Match the generated variable name
-};
-#endif // SHIELD_CORNE_RIGHT
-
-
-
-# ===========================================
-# FILE: ./display/waifu.bin
-# ===========================================
 
 
 
@@ -415,7 +281,7 @@ const lv_img_dsc_t waifu_image = {
     &kp TAB         &kp Q           &kp W           &kp E           &kp R           &kp T               &kp Y           &kp U           &kp I           &kp O           &kp P           &hash_td
 // ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
 // │12             │13             │14             │15             │16             │17             │   │18             │19             │20             │21             │22             │23             │
-    &kp ESC         &hrml LCMD A    &hrml LALT S    &hrml LCTRL D   &kp F           &kp G               &kp H           &kp J           &hrmr RCTRL K   &hrmr RALT L    &hrmr SQT RCMD  &kp BSLH
+    &kp ESC         &hrml LCMD A    &hrml LALT S    &hrml LCTRL D   &kp F           &kp G               &kp H           &kp J           &hrmr RCTRL K   &hrmr RALT L    &hrmr RCMD SQT  &kp BSLH
 // ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤   ├───────────────├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤
 // │24             │25             │26             │27             │28             │29             │   │30             │31             │32             │33             │34             │35             │
     &lt ED GRAVE    &kp Z           &kp X           &kp C           &kp V           &kp B               &kp N           &kp M           &kp COMMA       &kp DOT         &kp SEMICOLON   &lt MA SLASH
@@ -607,7 +473,7 @@ const lv_img_dsc_t waifu_image = {
       #binding-cells = <0>;
       bindings = 
         <&macro_tap &kp HASH>,
-        <&macro_tap &kp HASH>;
+        <&macro_tap &kp HASH>,
         <&macro_tap &kp HASH>;
       label = "TRIPLE_HASH";
     };
