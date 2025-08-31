@@ -1,53 +1,84 @@
 # Ignore everything by default
 *
 
-# Track important configuration files
+# Track dotfiles essentials
 !.gitignore
-!chromium-flags.conf
-!mimeapps.list
-!user-dirs.dirs
-!user-dirs.locale
-!zoom.conf
-!zoomus.conf
+!install.sh
+!README.md
 
-# Track development tool configs
-!nextjs-nodejs/
-!nextjs-nodejs/**
+# Track custom shell prompt
+!starship/
+!starship/**
 
-# Track GIMP configs (main settings only)
-!GIMP/
-!GIMP/3.0/
-!GIMP/3.0/gimprc
-!GIMP/3.0/shortcutsrc
-!GIMP/3.0/theme.css
-!GIMP/3.0/sessionrc
-# Ignore GIMP runtime/cache data
-GIMP/*/internal-data/
-GIMP/*/tool-options/
+# Track complete Neovim setup
+!nvim/
+!nvim/**
 
-# Track directories of interest
+# Track Hyprland configs (window manager + keybinds)
 !hypr/
+!hypr/**
 
-# Ignore sensitive data
+# Track app launcher config and themes
+!walker/
+!walker/**
+
+# Track OSD settings
+!swayosd/
+!swayosd/**
+
+# Track development environment
+!mise/
+!mise/**
+
+# Track only custom omarchy themes (not system defaults)
+!omarchy/
+!omarchy/current/
+!omarchy/current/**
+!omarchy/themes/
+!omarchy/themes/rose-pine-dark/
+!omarchy/themes/rose-pine-dark/**
+# Ignore system default themes (they're in ~/.local/share/omarchy/)
+
+# Track custom btop themes only
+!btop/
+!btop/themes/
+!btop/themes/**
+# Ignore btop.conf (it's mostly system generated)
+btop/btop.conf
+
+# Track alacritty config if customized beyond defaults
+!alacritty/
+!alacritty/**
+
+# Ignore all sensitive data and runtime files
 opencode/.env
 **/secrets
 **/tokens
 **/*.log
 **/*.tmp
-
-# Ignore application runtime data
-Slack/
-AWSVPNClient/
-go/telemetry/
-
-# Ignore databases and caches
 **/Cache/
+**/cache/
 **/Cookies*
 **/Database/
+**/databases/
 **/Local Storage/
 **/Service Worker/
 **/*-journal
 **/*-wal
 **/LOCK
 **/MANIFEST-*
+
+# Ignore application runtime data
+Slack/
+AWSVPNClient/
+go/telemetry/
+chromium/
+BraveSoftware/
+google-chrome*/
+microsoft-edge*/
+vivaldi*/
+1Password/
+GIMP/
+libreoffice/
+Typora/
 
