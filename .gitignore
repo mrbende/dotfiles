@@ -37,48 +37,13 @@
 !omarchy/themes/
 !omarchy/themes/rose-pine-dark/
 !omarchy/themes/rose-pine-dark/**
-# Ignore system default themes (they're in ~/.local/share/omarchy/)
 
 # Track custom btop themes only
 !btop/
 !btop/themes/
 !btop/themes/**
-# Ignore btop.conf (it's mostly system generated)
-btop/btop.conf
 
-# Track alacritty config if customized beyond defaults
+# Track alacritty config
 !alacritty/
 !alacritty/**
-
-# Ignore all sensitive data and runtime files
-opencode/.env
-**/secrets
-**/tokens
-**/*.log
-**/*.tmp
-**/Cache/
-**/cache/
-**/Cookies*
-**/Database/
-**/databases/
-**/Local Storage/
-**/Service Worker/
-**/*-journal
-**/*-wal
-**/LOCK
-**/MANIFEST-*
-
-# Ignore application runtime data
-Slack/
-AWSVPNClient/
-go/telemetry/
-chromium/
-BraveSoftware/
-google-chrome*/
-microsoft-edge*/
-vivaldi*/
-1Password/
-GIMP/
-libreoffice/
-Typora/
 
