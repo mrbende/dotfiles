@@ -1,0 +1,53 @@
+# Ignore everything by default
+*
+
+# Track important configuration files
+!.gitignore
+!chromium-flags.conf
+!mimeapps.list
+!user-dirs.dirs
+!user-dirs.locale
+!zoom.conf
+!zoomus.conf
+
+# Track development tool configs
+!nextjs-nodejs/
+!nextjs-nodejs/**
+
+# Track GIMP configs (main settings only)
+!GIMP/
+!GIMP/3.0/
+!GIMP/3.0/gimprc
+!GIMP/3.0/shortcutsrc
+!GIMP/3.0/theme.css
+!GIMP/3.0/sessionrc
+# Ignore GIMP runtime/cache data
+GIMP/*/internal-data/
+GIMP/*/tool-options/
+
+# Track directories of interest
+!hypr/
+
+# Ignore sensitive data
+opencode/.env
+**/secrets
+**/tokens
+**/*.log
+**/*.tmp
+
+# Ignore application runtime data
+Slack/
+AWSVPNClient/
+go/telemetry/
+
+# Ignore databases and caches
+**/Cache/
+**/Cookies*
+**/Database/
+**/Local Storage/
+**/Service Worker/
+**/*-journal
+**/*-wal
+**/LOCK
+**/MANIFEST-*
+
